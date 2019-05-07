@@ -1,7 +1,7 @@
 language: generic
 before_deploy:
   - mkdir artifacts
-  - zip artifacts/export.zip export.js
+  - zip artifacts/runtask-lambda.zip export.js
 deploy:
   provider: s3
   access_key_id: $AWS_ACCESS_KEY_ID
