@@ -26,30 +26,32 @@ exports.handler = (events, context, callback) => {
             }
         },
     };
-    var status = 'Failed';
+
     ecs.runTask(params, function(err, data) {
+        var status = 'Failed';
         if (err) console.log(err, err.stack); // an error occurred
         else {
             console.log(data);
             status = 'Succeeded';
         }
+
+        var statusparams = {
+            deploymentId: deploymentId,
+            lifecycleEventHookExecutionId: lifecycleEventHookExecutionId,
+            status: status // status can be 'Succeeded' or 'Failed'
+        };
+
+        // Pass AWS CodeDeploy the prepared validation test results.
+        codedeploy.putLifecycleEventHookExecutionStatus(statusparams, function(err, data) {
+            if (err) {
+                // Migration failed.
+                callback('Migration Failed');
+            } else {
+                // Migration succeeded.
+                callback(null, 'Migration succeeded');
+            }
+        });
+
         context.done(err, data);
-    });
-
-    var statusparams = {
-        deploymentId: deploymentId,
-        lifecycleEventHookExecutionId: lifecycleEventHookExecutionId,
-        status: status // status can be 'Succeeded' or 'Failed'
-    };
-
-    // Pass AWS CodeDeploy the prepared validation test results.
-    codedeploy.putLifecycleEventHookExecutionStatus(statusparams, function(err, data) {
-        if (err) {
-            // Migration failed.
-            callback('Migration Failed');
-        } else {
-            // Migration succeeded.
-            callback(null, 'Migration succeeded');
-        }
     });
 };
