@@ -1,0 +1,13 @@
+before_deploy:
+  - mkdir artifacts
+  - zip artifacts/export.zip export.js
+deploy:
+  provider: s3
+  access_key_id: $AWS_ACCESS_KEY_ID
+  secret_access_key: $AWS_SECRET_ACCESS_KEY
+  bucket: $BUCKET_NAME
+  skip_cleanup: true
+  region: eu-central-1
+  local_dir: "artifacts/"
+  on:
+    tags: true
