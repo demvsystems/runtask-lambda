@@ -45,13 +45,11 @@ exports.handler = (events, context, callback) => {
         codedeploy.putLifecycleEventHookExecutionStatus(statusparams, function(err, data) {
             if (err) {
                 // Migration failed.
-                callback('Migration Failed');
+                callback('Migration Failed. Reason: ' + err);
             } else {
                 // Migration succeeded.
                 callback(null, 'Migration succeeded');
             }
         });
-
-        context.done(err, data);
     });
 };
